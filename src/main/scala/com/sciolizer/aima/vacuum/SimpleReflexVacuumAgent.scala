@@ -29,3 +29,15 @@ object SimpleReflexVacuumAgent {
     }
   }
 }
+
+object SimpleReflexVacuumAgentInPenalizingEnvironment {
+  def main(args: Array[String]) {
+    for (start <- List(0, 1); leftDirty <- List(false, true); rightDirty <- List(false, true)) {
+      val state: VacuumWorldState = VacuumWorldState(start, mutable.IndexedSeq(leftDirty, rightDirty))
+      print(state + ":  ")
+      val simulator: VacuumSimulator = new VacuumSimulator(state, new SimpleReflexVacuumAgent())
+      simulator.run()
+      println(simulator.score)
+    }
+  }
+}
