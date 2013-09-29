@@ -27,7 +27,7 @@ object StatefulReflexVacuumAgent {
     for (start <- List(0, 1); leftDirty <- List(false, true); rightDirty <- List(false, true)) {
       val state: VacuumWorldState = VacuumWorldState(start, mutable.IndexedSeq(leftDirty, rightDirty))
       print(state + ":  ")
-      val simulator: PenalizingVacuumSimulator = new PenalizingVacuumSimulator(state, new SimpleReflexVacuumAgent())
+      val simulator: PenalizingVacuumSimulator = new PenalizingVacuumSimulator(state, new StatefulReflexVacuumAgent())
       simulator.run()
       println(simulator.score)
     }
