@@ -10,7 +10,6 @@ import scala.swing.event.KeyTyped
 import scala.swing.event.MouseReleased
 import scala.swing.event.FocusLost
 import java.awt.event.MouseEvent
-import scala.collection.mutable
 
 // First created by Joshua Ball on 9/28/13 at 9:20 PM
 class Polygons {
@@ -47,18 +46,18 @@ object HelloWorld extends SimpleSwingApplication {
 object LinePainting extends SimpleSwingApplication {
   lazy val ui = new Panel {
     background = Color.white
-    preferredSize = (200,200)
+    preferredSize = (200, 200)
 
     focusable = true
     listenTo(mouse.clicks, mouse.moves, keys)
 
     reactions += {
-      case e: MousePressed  =>
+      case e: MousePressed =>
         moveTo(e.point)
         requestFocusInWindow()
-      case e: MouseDragged  => lineTo(e.point)
+      case e: MouseDragged => lineTo(e.point)
       case e: MouseReleased => lineTo(e.point)
-      case KeyTyped(_,'c',_,_) =>
+      case KeyTyped(_, 'c', _, _) =>
         path = new geom.GeneralPath
         repaint()
       case _: FocusLost => repaint()
@@ -67,14 +66,21 @@ object LinePainting extends SimpleSwingApplication {
     /* records the dragging */
     var path = new geom.GeneralPath
 
-    def lineTo(p: Point) { path.lineTo(p.x, p.y); repaint() }
-    def moveTo(p: Point) { path.moveTo(p.x, p.y); repaint() }
+    def lineTo(p: Point) {
+      path.lineTo(p.x, p.y)
+      repaint()
+    }
+
+    def moveTo(p: Point) {
+      path.moveTo(p.x, p.y)
+      repaint()
+    }
 
     override def paintComponent(g: Graphics2D) = {
       super.paintComponent(g)
-      g.setColor(new Color(100,100,100))
+      g.setColor(new Color(100, 100, 100))
       g.drawString("Press left mouse button and drag to paint." +
-        (if(hasFocus) " Press 'c' to clear." else ""), 10, size.height-10)
+        (if (hasFocus) " Press 'c' to clear." else ""), 10, size.height - 10)
       g.setColor(Color.black)
       g.draw(path)
     }
@@ -89,13 +95,13 @@ object LinePainting extends SimpleSwingApplication {
 object PolygonPainting extends SimpleSwingApplication {
   lazy val ui = new Panel {
     background = Color.white
-    preferredSize = (200,200)
+    preferredSize = (200, 200)
 
     focusable = true
     listenTo(mouse.clicks, mouse.moves, keys)
 
     reactions += {
-      case e: MousePressed  =>
+      case e: MousePressed =>
         if (e.peer.getButton == MouseEvent.BUTTON2) {
           polygons = List(e.point) +: polygons
         } else {
@@ -106,30 +112,25 @@ object PolygonPainting extends SimpleSwingApplication {
         }
         repaint()
         requestFocusInWindow()
-//      case e: MouseDragged  => lineTo(e.point)
-//      case e: MouseReleased => lineTo(e.point)
-      case KeyTyped(_,'c',_,_) =>
+      //      case e: MouseDragged  => lineTo(e.point)
+      //      case e: MouseReleased => lineTo(e.point)
+      case KeyTyped(_, 'c', _, _) =>
         polygons = List()
         repaint()
       case _: FocusLost => repaint()
     }
 
-    /* records the dragging */
-//    var path = new geom.GeneralPath
     var polygons: List[List[Point]] = List()
-
-//    def lineTo(p: Point) { path.lineTo(p.x, p.y); repaint() }
-//    def moveTo(p: Point) { path.moveTo(p.x, p.y); repaint() }
 
     override def paintComponent(g: Graphics2D) = {
       super.paintComponent(g)
-      g.setColor(new Color(100,100,100))
+      g.setColor(new Color(100, 100, 100))
       g.drawString("Press left mouse button and drag to paint." +
-        (if(hasFocus) " Press 'c' to clear." else ""), 10, size.height-10)
+        (if (hasFocus) " Press 'c' to clear." else ""), 10, size.height - 10)
       g.setColor(Color.black)
       val path = new geom.GeneralPath
       for (polygon <- polygons) {
-        if (polygon.size > 2) {
+        if (polygon.size > 0) {
           val start = polygon.head
           path.moveTo(start.x, start.y)
           for (point <- polygon) {
@@ -139,13 +140,30 @@ object PolygonPainting extends SimpleSwingApplication {
         }
       }
       g.draw(path)
+      val optimal: List[Point] = OptimalPath.get(polygons, (0, 0), (100, 100))
+      val optimalPath = new geom.GeneralPath
+      optimalPath.moveTo(0, 0)
+      for (point <- optimal) {
+        optimalPath.lineTo(point.x, point.y)
+      }
+      g.draw(optimalPath)
     }
 
-//    moveTo((0, 0))
   }
 
   def top = new MainFrame {
     title = "Simple Line Painting Demo"
     contents = ui
+  }
+}
+
+object OptimalPath {
+  def get(polygons: List[List[Point]], start: Point, end: Point): List[Point] = {
+    val problem = PolygonProblem(start, end, polygons)
+    val search: SearchResult[Point, Point] = new BreadthFirstSearch().search(problem)
+    search match {
+      case Failure() => throw new Exception("failure")
+      case Solution(node) => node.actions
+    }
   }
 }
