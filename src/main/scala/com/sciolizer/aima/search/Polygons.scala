@@ -3,13 +3,20 @@ package com.sciolizer.aima.search
 import javax.swing.{JLabel, JFrame}
 import scala.swing._
 import scala.swing.Swing._
-import java.awt.{Color, Graphics2D, Point, geom}
-import scala.swing.event.MousePressed
-import scala.swing.event.MouseDragged
-import scala.swing.event.KeyTyped
-import scala.swing.event.MouseReleased
-import scala.swing.event.FocusLost
+import java.awt._
 import java.awt.event.MouseEvent
+import java.awt.geom.{Rectangle2D, Path2D, Line2D, Area}
+import java.awt.Point
+import scala.swing.event.MousePressed
+import scala.swing.Panel
+import scala.swing.event.MouseReleased
+import scala.swing.Button
+import java.awt.Graphics2D
+import scala.swing.event.MouseDragged
+import scala.List
+import scala.swing.event.KeyTyped
+import java.awt.Color
+import scala.swing.event.FocusLost
 
 // First created by Joshua Ball on 9/28/13 at 9:20 PM
 class Polygons {
@@ -160,10 +167,39 @@ object PolygonPainting extends SimpleSwingApplication {
 object OptimalPath {
   def get(polygons: List[List[Point]], start: Point, end: Point): List[Point] = {
     val problem = PolygonProblem(start, end, polygons)
+    println(problem.reachable)
     val search: SearchResult[Point, Point] = new BreadthFirstSearch().search(problem)
     search match {
       case Failure() => throw new Exception("failure")
       case Solution(node) => node.actions
     }
+  }
+}
+
+object AreaSandbox {
+  def main(args: Array[String]) {
+    //    val area1: Area = new Area(new Line2D.Double(0, 0, 10, 10))
+    //    println(area1.isEmpty)
+    //    val area2: Area = new Area(new Line2D.Double(10, 10, 20, 20))
+    //    println(area2.isEmpty)
+    //    val intersects: Any = area1.intersects(area2)
+    //    println(intersects)
+    val path = new Path2D.Double()
+    path.moveTo(10, 10)
+    path.lineTo(10, 20)
+    path.lineTo(20, 20)
+    path.lineTo(20, 10)
+    path.closePath()
+    val area: Area = new Area(path)
+    val line = new Line2D.Double(0, 0, 5, 5)
+    val strokedLine: Shape = new BasicStroke(1).createStrokedShape(line)
+    println(area.isEmpty)
+    area.intersect(new Area(strokedLine))
+    val rect: Rectangle2D = area.getBounds2D
+    println(rect.getWidth)
+    println(rect.getHeight)
+    //    println(area)
+    //    println(area.isEmpty)
+    //    println(area.isPolygonal)
   }
 }
