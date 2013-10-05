@@ -147,7 +147,8 @@ object PolygonPainting extends SimpleSwingApplication {
         }
       }
       g.draw(path)
-      val optimal: List[Point] = OptimalPath.get(polygons, (0, 0), (100, 100))
+      val bounds: Rectangle = g.getDeviceConfiguration.getBounds
+      val optimal: List[Point] = OptimalPath.get(polygons, (0, 0), (bounds.width, bounds.height))
       val optimalPath = new geom.GeneralPath
       optimalPath.moveTo(0, 0)
       for (point <- optimal) {
