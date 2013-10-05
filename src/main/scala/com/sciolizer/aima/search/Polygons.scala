@@ -109,7 +109,7 @@ object PolygonPainting extends SimpleSwingApplication {
 
     reactions += {
       case e: MousePressed =>
-        if (e.peer.getButton == MouseEvent.BUTTON2) {
+        if (e.peer.getButton == MouseEvent.BUTTON3) {
           polygons = List(e.point) +: polygons
         } else {
           if (polygons.isEmpty) {
