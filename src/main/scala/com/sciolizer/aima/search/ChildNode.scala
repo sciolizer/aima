@@ -5,6 +5,8 @@ sealed trait Node[+State, +Action] {
   val pathCost: Double
   lazy val actions: List[Action] = reversedActions.reverse
   val reversedActions: List[Action]
+
+  //  def compare(that: Node[State, Action]): Int = pathCost.compareTo(that.pathCost)
 }
 
 case class ParentNode[+State, +Action](state: State) extends Node[State, Action] {
@@ -15,6 +17,7 @@ case class ParentNode[+State, +Action](state: State) extends Node[State, Action]
 case class ChildNode[+State, +Action](state: State, parent: Node[State, Action], action: Action, pathCost: Double)
   extends Node[State, Action] {
   lazy val reversedActions = action +: parent.reversedActions
+
   //  def getPathBack: List[Action] = {
   //    step match {
   //      case None => List()
