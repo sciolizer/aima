@@ -182,7 +182,7 @@ object OptimalPath {
     }
     val problem = PolygonProblem(start, end, shapes)
     println(problem.reachable)
-    val search: SearchResult[Point, Point] = new UniformCostSearch().search(problem)
+    val search: SearchResult[Point, Point] = new IterativeDeepeningSearch().search(problem)
     search match {
       case Failure() => throw new Exception("failure")
       case Solution(node) => node.actions
