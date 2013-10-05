@@ -5,17 +5,17 @@ import scala.swing._
 import scala.swing.Swing._
 import java.awt._
 import java.awt.event.MouseEvent
-import java.awt.geom.{Rectangle2D, Path2D, Line2D, Area}
+import java.awt.geom._
 import java.awt.Point
-import scala.swing.event.MousePressed
 import scala.swing.Panel
-import scala.swing.event.MouseReleased
 import scala.swing.Button
 import java.awt.Graphics2D
-import scala.swing.event.MouseDragged
 import scala.List
-import scala.swing.event.KeyTyped
 import java.awt.Color
+import scala.swing.event.MousePressed
+import scala.swing.event.MouseReleased
+import scala.swing.event.MouseDragged
+import scala.swing.event.KeyTyped
 import scala.swing.event.FocusLost
 
 // First created by Joshua Ball on 9/28/13 at 9:20 PM
@@ -166,7 +166,20 @@ object PolygonPainting extends SimpleSwingApplication {
 
 object OptimalPath {
   def get(polygons: List[List[Point]], start: Point, end: Point): List[Point] = {
-    val problem = PolygonProblem(start, end, polygons)
+    val shapes: List[Shape] = for (polygon <- polygons) yield {
+      val path = new Path2D.Double()
+      var first = true
+      for (point <- polygon) {
+        if (first) {
+          path.moveTo(point.x, point.y)
+          first = false
+        } else {
+          path.lineTo(point.x, point.y)
+        }
+      }
+      path
+    }
+    val problem = PolygonProblem(start, end, shapes)
     println(problem.reachable)
     val search: SearchResult[Point, Point] = new BreadthFirstSearch().search(problem)
     search match {
@@ -190,6 +203,16 @@ object AreaSandbox {
     path.lineTo(20, 20)
     path.lineTo(20, 10)
     path.closePath()
+    val iterator: PathIterator = path.getPathIterator(null)
+    while (!iterator.isDone) {
+      //      iterator.next()
+      val vls: Array[Double] = Array(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+      val segment: Int = iterator.currentSegment(vls)
+      println(segment)
+      println(vls.toList)
+      iterator.next()
+    }
+    println("end of iteration")
     val area: Area = new Area(path)
     val line = new Line2D.Double(0, 0, 5, 5)
     val strokedLine: Shape = new BasicStroke(1).createStrokedShape(line)
