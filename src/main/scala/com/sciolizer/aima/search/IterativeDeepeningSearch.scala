@@ -1,8 +1,8 @@
 package com.sciolizer.aima.search
 
 // First created by Joshua Ball on 10/5/13 at 12:37 PM
-class IterativeDeepeningSearch extends Search {
-  def search[State, Action](problem: Problem[State, Action]): SearchResult[State, Action] = {
+class IterativeDeepeningSearch[State] extends Search[State] {
+  def search[Action](problem: Problem[State, Action]): SearchResult[State, Action] = {
     for (depth <- 0 until Integer.MAX_VALUE) {
       val result = IterativeDeepeningSearch.depthLimitedSearch(problem, depth)
       result.searchResult match {

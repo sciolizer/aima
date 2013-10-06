@@ -2,8 +2,8 @@ package com.sciolizer.aima.search
 
 import scala.collection.mutable
 
-class UniformCostSearch extends Search {
-  def search[State, Action](problem: Problem[State, Action]): SearchResult[State, Action] = {
+class UniformCostSearch[State] extends Search[State] {
+  def search[Action](problem: Problem[State, Action]): SearchResult[State, Action] = {
     var node: Node[State, Action] = ParentNode(problem.initialState)
     val ordering: Ordering[Node[State, Action]] = Ordering.by(_.pathCost)
     //    if (problem.goalTest(node.state)) return Solution(node)

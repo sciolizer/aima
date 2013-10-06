@@ -3,8 +3,8 @@ package com.sciolizer.aima.search
 import scala.collection.mutable
 
 // First created by Joshua Ball on 10/1/13 at 8:30 AM
-class BreadthFirstSearch extends Search {
-  def search[State, Action](problem: Problem[State, Action]): SearchResult[State, Action] = {
+class BreadthFirstSearch[State] extends Search[State] {
+  def search[Action](problem: Problem[State, Action]): SearchResult[State, Action] = {
     var node: Node[State, Action] = ParentNode(problem.initialState)
     if (problem.goalTest(node.state)) return Solution(node)
     val frontier: mutable.Queue[Node[State, Action]] = mutable.Queue(node)
