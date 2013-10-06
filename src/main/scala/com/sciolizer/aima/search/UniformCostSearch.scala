@@ -44,12 +44,4 @@ object TestPriorityQueuePicksLowestPathCost {
       ChildNode("Hello", ParentNode(), "Goodbye", 2.0))(ordering.reverse)
     println(queue.dequeue())
   }
-
-  //  def main(args: Array[String]) {
-  //    val queue: mutable.PriorityQueue[ChildNode[String, String]] = mutable.PriorityQueue[ChildNode[String,String]]()(Ordering.ordered[ChildNode[String,String]])
-  //    queue += ChildNode(null, null, null, 1.0)
-  //    queue += ChildNode(null, null, null, 2.0)
-  //    val dequeue: ChildNode[Any, Any] = queue.dequeue()
-  //    println(dequeue)
-  //  }
 }
